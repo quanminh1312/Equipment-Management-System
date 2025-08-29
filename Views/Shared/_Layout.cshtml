@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CNPM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <style>
+        /* Style cho background và logo */
+        body {
+            background-image: url('/Images/Background.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .logo {
+            width: 150px;
+        }
+
+        .hero-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 50px;
+            border-radius: 10px;
+        }
+
+        .image-limited {
+            max-width: 300px; /* Giới hạn chiều rộng tối đa */
+            max-height: 200px; /* Giới hạn chiều cao tối đa */
+            width: auto; /* Giữ tỉ lệ khung hình */
+            height: auto; /* Giữ tỉ lệ khung hình */
+        }
+    </style>
+    @RenderSection("CustomStyles", required: false)
+</head>
+<body>
+    <header>
+       @*  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuanLyThietBi</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Quy Định</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <div class="ms-auto">
+                        @await Html.PartialAsync("_LoginPartial")
+                    </div>
+                </div>
+            </div>
+        </nav> *@
+        <nav>
+            <div class="navbar">
+                <i class='bx bx-menu'></i>
+                <div class="logo"><a asp-area="" asp-controller="Home" asp-action="Index">QLTB</a></div>
+                <div class="nav-links">
+                    <div class="sidebar-logo">
+                        <span class="logo-name">QLTB</span>
+                        <i class='bx bx-x'></i>
+                    </div>
+                    <ul class="links">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy">Quy Định</a></li>
+                        @await Html.PartialAsync("RoleMenuDropDown")
+                        @* <li>
+                            <a href="#">JAVASCRIPT</a>
+                            <i class='bx bxs-chevron-down js-arrow arrow '></i>
+                            <ul class="js-sub-menu sub-menu">
+                                <li><a href="#">Dynamic Clock</a></li>
+                                <li><a href="#">Form Validation</a></li>
+                                <li><a href="#">Card Slider</a></li>
+                                <li><a href="#">Complete Website</a></li>
+                            </ul>
+                        </li> *@
+                        @await Html.PartialAsync("_LoginPartial")
+                    </ul>
+                </div>
+                @* <div class="search-box">
+                    <i class='bx bx-search'></i>
+                    <div class="input-box">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div> *@
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/script.js" asp-append-version="true"></script>
+    <script>
+        var ngayMuon = false;
+        var ngayTra = false;
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Hàm hiển thị modal xác nhận
+        function showModal() {
+            $('#confirmDeleteModal').modal('show');
+            return false;
+        }
+
+        // Hàm xác nhận xóa, sau đó submit form
+        function confirmDelete() {
+            $('#confirmDeleteModal').modal('hide'); // Đóng modal sau khi xác nhận
+            var currentDate = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại theo định dạng yyyy-mm-dd
+            if (ngayMuon) $("#NgayMuonThucTe").val(currentDate);
+            if (ngayTra) $("#NgayTraThucTe").val(currentDate);
+            $("#FForm").trigger("submit");
+        }
+        document.querySelectorAll('.close').forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (ngayMuon) {
+                    $("#btnNgayMuonThucTe").text("Xác nhận đã mượn thiết bị");
+                    $("#btnNgayMuonThucTe").prop("disabled", false);
+                    $("#btnNgayMuonThucTe").css("pointer-events", "auto");
+                    $("#btnNgayMuonThucTe").css("opacity", "1");
+                    ngayMuon = false;
+                }
+                if (ngayTra) {
+                    $("#btnNgayTraThucTe").text("Xác nhận đã trả thiết bị");
+                    $("#btnNgayTraThucTe").prop("disabled", false);
+                    $("#btnNgayTraThucTe").css("pointer-events", "auto");
+                    $("#btnNgayTraThucTe").css("opacity", "1");
+                    ngayTra = false;
+                }
+                $('#confirmDeleteModal').modal('hide'); // Đóng modal khi nhấn nút "Hủy" hoặc nút dấu "X"
+            });
+        });
+    </script>
+</body>
+</html>

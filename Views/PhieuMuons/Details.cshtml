@@ -1,0 +1,80 @@
+﻿@model CNPM.Models.PhieuMuon
+@inject AppDbContext _context
+@{
+    ViewData["Title"] = "Details";
+    var tennguoimuon = _context.NguoiDungs.FirstOrDefault(n => n.Id == Model.IdNguoiMuon).TenNguoiDung;
+}
+@functions
+{
+    private string TrangThai(int? id)
+    {
+        if (id == null) return "";
+        string trangThai = "";
+        var chiTietPhieuMuons = _context.ChiTietPhieuMuons.Where(c => c.IdPhieuMuon == id);
+        if (chiTietPhieuMuons.Any(c => c.XacNhan == null) || chiTietPhieuMuons == null || chiTietPhieuMuons.Count() == 0)
+        {
+            trangThai = "Chờ xác nhận";
+        }
+        if (chiTietPhieuMuons.Any(c => c.XacNhan != null))
+        {
+            trangThai = "Đã xác nhận";
+        }
+        if (chiTietPhieuMuons.Any(c => c.NgayTraThucTe == null && c.NgayMuonThucTe != null))
+        {
+            trangThai = "Đang mượn";
+        }
+        if (!chiTietPhieuMuons.Any(c => (c.NgayTraThucTe == null && c.XacNhan == true) || c.XacNhan == null) && chiTietPhieuMuons != null && chiTietPhieuMuons.Count() != 0)
+        {
+            trangThai = "Đã hoàn thành";
+        }
+        return trangThai;
+    }
+}
+<h1 class="eyebrow">Chi tiết</h1>
+
+<div>
+    <h4 class="eyebrow">Phiếu mượn</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết phiếu mượn</span>
+            @Html.DisplayFor(model => model.Id)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.NguoiMuon):</div><div class="price">@Html.DisplayFor(model => model.NguoiMuon.TenNguoiDung)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayLapPhieuMuon):</div><div class="price">@Html.DisplayFor(model => model.NgayLapPhieuMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayMuon):</div><div class="price">@Html.DisplayFor(model => model.NgayMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayHenTra):</div><div class="price">@Html.DisplayFor(model => model.NgayHenTra)</div>
+                    <div class="qty">Trạng thái:</div><div class="price">@ViewBag.TrangThai</div>
+        </div>
+    </details>
+    </section>
+    </div>
+</div>
+<div>
+    @if (TrangThai(Model.Id) == "Chờ xác nhận" || TrangThai(Model.Id) == "Đã xác nhận")
+    {
+        <a class="eyebrow" asp-action="Edit" asp-route-id="@Model?.Id" asp-route-mange="@ViewBag.manage">Chỉnh sửa</a>
+    }
+    <a class="eyebrow" asp-action="Index" asp-route-manage="@ViewBag.manage">Trở về danh sách</a>
+</div>
+<script>
+    let PhieuMuonId = @Model.Id;
+    let manage = '@ViewBag.manage.ToString().ToLower()';
+</script>
+<div id="partial-content">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $.ajax({
+            url: '@Url.Action("Index", "chitietphieumuons")',
+            type: 'GET',
+            data: { idPhieuMuon: PhieuMuonId, manage: manage },
+            success: function (result) {
+                $('#partial-content').html(result);
+            }
+        });
+    </script>
+</div>

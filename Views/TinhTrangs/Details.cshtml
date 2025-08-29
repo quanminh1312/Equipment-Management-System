@@ -1,0 +1,30 @@
+﻿@model CNPM.Models.TinhTrang
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Chi tiết</h1>
+
+<div>
+    <h4>Tình trạng</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết tình trạng</span>
+            @Html.DisplayFor(model => model.TenTinhTrang)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.TenTinhTrang):</div><div class="price">@Html.DisplayFor(model => model.TenTinhTrang)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a> |
+    <a asp-action="Index">trở về danh sách</a>
+</div>

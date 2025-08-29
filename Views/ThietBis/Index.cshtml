@@ -1,0 +1,64 @@
+﻿@model IEnumerable<CNPM.Models.ThietBi>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Danh sách thiết bị</h1>
+
+<p>
+    <a asp-action="Create">Tạo mới</a>
+</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="~/css/Table.css">
+<div class="table-users">
+    <div class="header">Thiết bị</div>
+
+    <table cellspacing="0">
+        <tr>
+                <th>
+                @Html.DisplayNameFor(model => model.MaThietBi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenThietBi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoaiThietBi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NhaSanXuat)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TinhTrang)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaThietBi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenThietBi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoaiThietBi.TenLoaiThietBi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NhaSanXuat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TinhTrang.TenTinhTrang)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Chỉnh sửa</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Chi Tiết</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>

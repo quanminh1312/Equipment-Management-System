@@ -1,0 +1,40 @@
+﻿@model IEnumerable<CNPM.Models.TinhTrang>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Danh sách</h1>
+
+<p>
+    <a asp-action="Create">Tạo mới</a>
+</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="~/css/Table.css">
+<div class="table-users">
+    <div class="header">Tình trạng</div>
+
+    <table cellspacing="0">
+        <tr>
+                <th>
+                @Html.DisplayNameFor(model => model.TenTinhTrang)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenTinhTrang)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Chỉnh sửa</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Chi Tiết</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>

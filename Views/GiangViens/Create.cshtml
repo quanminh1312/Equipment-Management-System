@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model CNPM.Models.GiangVien
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Thêm mới</h1>
+
+<h4>Giảng viên</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="FForm" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Khoa" class="control-label"></label>
+                <input asp-for="Khoa" class="form-control" />
+                <span asp-validation-for="Khoa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HocVi" class="control-label"></label>
+                <input asp-for="HocVi" class="form-control" />
+                <span asp-validation-for="HocVi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChuyenNganh" class="control-label"></label>
+                <input asp-for="ChuyenNganh" class="form-control" />
+                <span asp-validation-for="ChuyenNganh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaNguoiDung" class="control-label"></label>
+                <input asp-for="MaNguoiDung" class="form-control" />
+                <span asp-validation-for="MaNguoiDung" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenNguoiDung" class="control-label"></label>
+                <input asp-for="TenNguoiDung" class="form-control" />
+                <span asp-validation-for="TenNguoiDung" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GioiTinh" class="control-label"></label>
+                <input asp-for="GioiTinh" class="form-control" />
+                <span asp-validation-for="GioiTinh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiaChi" class="control-label"></label>
+                <input asp-for="DiaChi" class="form-control" />
+                <span asp-validation-for="DiaChi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoDienThoai" class="control-label"></label>
+                <input asp-for="SoDienThoai" class="form-control" />
+                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgaySinh" class="control-label"></label>
+                <input asp-for="NgaySinh" class="form-control" />
+                <span asp-validation-for="NgaySinh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="file" class="control-label"></label>
+                <input type="file" class="form-control" id="file" name="file" />
+                <span asp-validation-for="AnhDaiDien" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Thêm" class="btn btn-primary" onclick="return showModal()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @if (User.IsInRole("ad"))
+    {
+        <div>
+         <a asp-action="Index">Trờ về danh sách</a>
+        </div>
+    }
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận tạo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

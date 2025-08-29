@@ -1,0 +1,525 @@
+﻿@using System.Text.Json;
+@inject AppDbContext _context
+<link href="~/assets/css/bootstrap.css" rel="stylesheet">
+<!--external css-->
+<link href="~/assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/assets/css/zabuto_calendar.css">
+<link rel="stylesheet" type="text/css" href="~/assets/js/gritter/css/jquery.gritter.css"/>
+<link rel="stylesheet" type="text/css" href="~/assets/lineicons/style.css">
+
+<!-- Custom styles for this template -->
+<link href="~/assets/css/style.css" rel="stylesheet">
+<link href="~/assets/css/style-responsive.css" rel="stylesheet">
+
+<script src="~/assets/js/chart-master/Chart.js"></script>
+@functions
+{
+    class NgId // Class để lưu Id người dùng và tổng số lượng thiết bị mượn
+    {
+        public int NguoiDung { get; set; }
+        public int TongSoLuongMuon { get; set; }
+    }
+}
+@{
+    Func<string> getRandomColor = () =>
+    {
+        Random rnd = new Random();
+        return $"#{rnd.Next(0x1000000):X6}"; // Tạo màu Hex ngẫu nhiên
+    };
+    var loaiThietBi = _context.LoaiThietBis.ToList();
+    var loaiThietBiColor = new List<string>();
+    var loaiNguoiDung = new List<string>() {"Thủ Kho", "Sinh Viên","Giảng Viên"};
+    var loaiNguoiDungColor = new List<string>();
+    var tinhTrangThietBi = _context.TinhTrang.ToList();
+    var tinhTrangThietBiColor = new List<string>();
+    var tinhTrangPhieuMuon = new List<string>() { "Đang chờ", "Đã Xác nhận", "Chưa trả", "Đã trả" };
+    var tinhTrangPhieuMuonColor = new List<string>();
+    var tinhTrangChiTietPhieuMuon = new List<string>() { "Đang chờ", "Đã Xác nhận", "Chưa trả", "Đã trả" };
+    var tinhTrangChiTietPhieuMuonColor = new List<string>();
+
+    NgId nguoiDungid;
+    dynamic nguoiDung;
+    try
+    {
+        // lấy người dùng có số lượng thiết bị mượn nhiều nhất
+        nguoiDungid = _context.ChiTietPhieuMuons
+        .Join(
+            _context.PhieuMuons, // Join với bảng PhieuMuon
+            ctp => ctp.IdPhieuMuon, // Khóa chính (Foreign Key) từ ChiTietPhieuMuon
+            pm => pm.Id, // Khóa chính của PhieuMuon
+            (ctp, pm) => new
+            {
+                ctp.SoLuongMuon,
+                pm.IdNguoiMuon // Dữ liệu người mượn từ PhieuMuon
+            }
+        )
+        .GroupBy(x => x.IdNguoiMuon) // Nhóm theo người mượn
+        .Select(g => new NgId
+        {
+            NguoiDung = g.Key, // Người dùng
+            TongSoLuongMuon = g.Sum(x => x.SoLuongMuon) // Tổng số lượng thiết bị đã mượn
+        })
+        .OrderByDescending(x => x.TongSoLuongMuon) // Sắp xếp giảm dần theo số lượng
+        .ToList().First();
+        nguoiDung = _context.NguoiDungs.Where(x => x.Id == nguoiDungid.NguoiDung).FirstOrDefault();
+    }
+    catch (Exception)
+    {
+        nguoiDungid = null;
+        nguoiDung = null;
+    }
+    var list = ViewData["list"] as List<CNPM.Controllers.ChiTietPhieuMuonModel>;
+}
+<style>
+    #main-content {
+        margin: 0 auto; /* Căn giữa */
+        padding: 20px; /* Khoảng cách giữa nội dung và biên */
+        width: 100%; /* Chiếm toàn bộ chiều rộng */
+        max-width: 1200px; /* Đảm bảo nội dung không quá rộng trên màn hình lớn */
+    }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    @@media (max-width: 768px) {
+        #main-content {
+            padding: 10px; /* Giảm padding trên màn hình nhỏ */
+        }
+    }
+</style>
+<section id="main-content" style="margin: 0 auto; width: 100%; max-width: 1200px;">
+    <section class="wrapper">
+
+        <div class="row">
+            <div class="col-md-12 main-chart">
+
+                <div class="row mtbox">
+                    <div class="col-md-2 col-sm-2 col-md-offset-1 box0">
+                        <div class="box1">
+                            <span class="li_user"></span>
+                            <h3>@ViewBag.NguoiDung</h3>
+                        </div>
+                        <p>có @ViewBag.NguoiDung người dùng trong chương trình</p>
+                    </div>
+                    <div class="col-md-2 col-sm-2 box0">
+                        <div class="box1">
+                            <span class="li_display"></span>
+                            <h3>@ViewBag.ThietBi</h3>
+                        </div>
+                        <p>Có @ViewBag.ThietBi thiết bị trong kho</p>
+                    </div>
+                    <div class="col-md-2 col-sm-2 box0">
+                        <div class="box1">
+                            <span class="li_stack"></span>
+                            <h3>@ViewBag.LoaiThietBi</h3>
+                        </div>
+                        <p>có @ViewBag.LoaiThietBi loại thiết bị trong kho</p>
+                    </div>
+                    <div class="col-md-2 col-sm-2 box0">
+                        <div class="box1">
+                            <span class="li_news"></span>
+                            <h3>@ViewBag.PhieuMuon</h3>
+                        </div>
+                        <p>Có @ViewBag.PhieuMuon phiếu mượn trong chương trình</p>
+                    </div>
+                    <div class="col-md-2 col-sm-2 box0">
+                        <div class="box1">
+                            <span class="li_data"></span>
+                            <h3>OK!</h3>
+                        </div>
+                        <p>Server hoạt động đang hoạt động tốt, bạn hãy tận hưỡng!</p>
+                    </div>
+
+                </div><!-- /row mt -->
+
+
+                <div class="row mt">
+                    <div class="col-md-4 col-sm-4 mb">
+                        <div class="white-panel pn donut-chart">
+                            <div class="white-header">
+                                <h5>Người dùng trên loại người dùng</h5>
+                            </div>
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div class="col-sm-6 col-xs-6 goleft" style="overflow-y: auto; max-height: 200px; padding-right: 10px;">
+                                    @for (int i = 0; i < loaiNguoiDung.Count; i++)
+                                    {
+                                        var randomColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                                        loaiNguoiDungColor.Add(randomColor);
+                                        <!-- Hình vuông thay thế hình fa-database -->
+                                        <p>
+                                            <span style="display:inline-block; width:20px; height:20px; background-color:@randomColor;"></span>
+                                            @loaiNguoiDung[i]
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-sm-6 col-xs-6 text-center">
+                                    <canvas id="serverstatus02" height="120" width="120"></canvas>
+                                    <script>
+                                        var doughnutData = [
+                                            @for (int i = 0; i < loaiNguoiDung.Count; i++)
+                                        {
+                                            int value = 0;
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    value = _context.ThuKhos.Count();
+                                                    break;
+                                                case 1:
+                                                    value = _context.sinhViens.Count();
+                                                    break;
+                                                case 2:
+                                                    value = _context.GiangViens.Count();
+                                                    break;
+                                            }
+                                            <text>
+                                                {
+                                                    value: @value,
+                                                    color: "@loaiNguoiDungColor[i]"
+                                                },
+                                            </text>
+                                        }
+                                        ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus02").getContext("2d")).Doughnut(doughnutData);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+
+
+                    <div class="col-md-4 col-sm-4 mb">
+                        <div class="white-panel pn donut-chart">
+                            <div class="white-header">
+                                <h5>Thiết bị trên loại thiết bị</h5>
+                            </div>
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div class="col-sm-6 col-xs-6 goleft" style="overflow-y: auto; max-height: 200px; padding-right: 10px;">
+                                    @for (int i = 0; i < loaiThietBi.Count; i++)
+                                    {
+                                        var randomColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                                        loaiThietBiColor.Add(randomColor);
+                                        <!-- Hình vuông thay thế hình fa-database -->
+                                        <p>
+                                            <span style="display:inline-block; width:20px; height:20px; background-color:@randomColor;"></span>
+                                            @loaiThietBi[i].TenLoaiThietBi
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-sm-6 col-xs-6 text-center">
+                                    <canvas id="serverstatus01" height="120" width="120"></canvas>
+                                    <script>
+                                        var doughnutData = [
+                                        @for (int i = 0; i < loaiThietBi.Count; i++)
+                                        {
+                                            var value = _context.ThietBis.Where(x => x.IdLoaiThietBi == loaiThietBi[i].Id).Count();
+                                            <text>
+                                                {
+                                                    value: @value,
+                                                    color: "@loaiThietBiColor[i]"
+                                                },
+                                            </text>
+                                        }
+                                        ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus01").getContext("2d")).Doughnut(doughnutData);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb">
+                        <!-- WHITE PANEL - TOP USER -->
+                        <div class="white-panel pn">
+                            <div class="white-header">
+                                <h5>Người dùng mượn nhiều nhất</h5>
+                            </div>
+                            <p><img src="~/@nguoiDung.AnhDaiDien" class="img-circle" width="80"></p>
+                            <p><b>@nguoiDung.TenNguoiDung</b></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="small mt">Từng mượn</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>@nguoiDungid.TongSoLuongMuon thiết bị</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /col-md-4 -->
+
+
+                </div><!-- /row -->
+
+
+                <div class="row">
+                    <!-- TWITTER PANEL -->
+                    <div class="col-md-4 mb">
+                        <div class="darkblue-panel pn donut-chart">
+                            <div class="darkblue-header">
+                                <h5>Tình trạng thiết bị</h5>
+                            </div>
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div class="col-sm-6 col-xs-6 goleft" style="overflow-y: auto; max-height: 200px; padding-right: 10px;">
+                                    @for (int i = 0; i < tinhTrangThietBi.Count; i++)
+                                    {
+                                        var randomColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                                        tinhTrangThietBiColor.Add(randomColor);
+                                        <!-- Hình vuông thay thế hình fa-database -->
+                                        <p>
+                                            <span style="display:inline-block; width:20px; height:20px; background-color:@randomColor;"></span>
+                                            @tinhTrangThietBi[i].TenTinhTrang
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-sm-6 col-xs-6 text-center">
+                                    <canvas id="serverstatus07" height="120" width="120"></canvas>
+                                    <script>
+                                        var doughnutData = [
+                                        @for (int i = 0; i < tinhTrangThietBi.Count; i++)
+                                        {
+                                            var value = _context.ThietBis.Where(x => x.IdTinhTrang == tinhTrangThietBi[i].Id).Count();
+                                            <text>
+                                                {
+                                                    value: @value,
+                                                    color: "@tinhTrangThietBiColor[i]"
+                                                },
+                                            </text>
+                                        }
+                                        ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus07").getContext("2d")).Doughnut(doughnutData);
+                                    </script>
+                                </div>
+                            </div>
+                        </div><! -- /darkblue panel -->
+                    </div><!-- /col-md-4 -->
+
+
+                    <div class="col-md-4 mb">
+                        <div class="darkblue-panel pn donut-chart">
+                            <div class="darkblue-header">
+                                <h5>Tình trạng phiếu mượn</h5>
+                            </div>
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div class="col-sm-6 col-xs-6 goleft" style="overflow-y: auto; max-height: 200px; padding-right: 10px;">
+                                    @for (int i = 0; i < tinhTrangPhieuMuon.Count; i++)
+                                    {
+                                        var randomColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                                        tinhTrangPhieuMuonColor.Add(randomColor);
+                                        <!-- Hình vuông thay thế hình fa-database -->
+                                        <p>
+                                            <span style="display:inline-block; width:20px; height:20px; background-color:@randomColor;"></span>
+                                            @tinhTrangPhieuMuon[i]
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-sm-6 col-xs-6 text-center">
+                                    <canvas id="serverstatus06" height="120" width="120"></canvas>
+                                    <script>
+                                        var doughnutData = [
+                                        @for (int i = 0; i < tinhTrangPhieuMuon.Count; i++)
+                                        {
+                                            int value = 0;
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    value = ViewBag.Pending;
+                                                    break;
+                                                case 1:
+                                                    value = ViewBag.Accepted;
+                                                    break;
+                                                case 2:
+                                                    value = ViewBag.Borrowed;
+                                                    break;
+                                                case 3:
+                                                    value = ViewBag.Finished;
+                                                    break;
+                                            }
+                                            <text>
+                                                {
+                                                    value: @value,
+                                                    color: "@tinhTrangPhieuMuonColor[i]"
+                                                },
+                                            </text>
+                                        }
+                                                                                ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus06").getContext("2d")).Doughnut(doughnutData);
+                                    </script>
+                                </div>
+                            </div>
+                        </div><! -- /darkblue panel -->
+                    </div><!-- /col-md-4 -->
+
+
+
+                    <div class="col-md-4 mb">
+                        <div class="darkblue-panel pn donut-chart">
+                            <div class="darkblue-header">
+                                <h5>Tình trạng chi tiết phiếu mượn</h5>
+                            </div>
+                            <div class="row" style="display: flex; align-items: center;">
+                                <div class="col-sm-6 col-xs-6 goleft" style="overflow-y: auto; max-height: 200px; padding-right: 10px;">
+                                    @for (int i = 0; i < tinhTrangChiTietPhieuMuon.Count; i++)
+                                    {
+                                        var randomColor = getRandomColor(); // Lấy màu ngẫu nhiên
+                                        tinhTrangChiTietPhieuMuonColor.Add(randomColor);
+                                        <!-- Hình vuông thay thế hình fa-database -->
+                                        <p>
+                                            <span style="display:inline-block; width:20px; height:20px; background-color:@randomColor;"></span>
+                                            @tinhTrangChiTietPhieuMuon[i]
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-sm-6 col-xs-6 text-center">
+                                    <canvas id="serverstatus05" height="120" width="120"></canvas>
+                                    <script>
+                                        var doughnutData = [
+                                        @for (int i = 0; i < tinhTrangChiTietPhieuMuon.Count; i++)
+                                        {
+                                            int value = 0;
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    value = ViewBag.CTPending;
+                                                    break;
+                                                case 1:
+                                                    value = ViewBag.CTAccepted;
+                                                    break;
+                                                case 2:
+                                                    value = ViewBag.CTBorrowed;
+                                                    break;
+                                                case 3:
+                                                    value = ViewBag.CTFinished;
+                                                    break;
+                                            }
+                                            <text>
+                                                {
+                                                    value: @value,
+                                                    color: "@tinhTrangChiTietPhieuMuonColor[i]"
+                                                },
+                                            </text>
+                                        }
+                                        ];
+                                        var myDoughnut = new Chart(document.getElementById("serverstatus05").getContext("2d")).Doughnut(doughnutData);
+                                    </script>
+                                </div>
+                            </div>
+                        </div><! -- /darkblue panel -->
+                    </div><!-- /col-md-4 -->
+
+                </div><!-- /row -->
+
+                @* <div class="row mt">
+                    <!--CUSTOM CHART START -->
+                    <div class="border-head">
+                        <h3>Lịch cho mượn theo thời gian</h3>
+                    </div>
+                    <div class="content-panel">
+                        <div class="panel-body text-center">
+                            <canvas id="line" height="600" width="800"></canvas>
+                            <script>
+                                var lineChartData = {
+                                    labels : ["","","","","","","","","",""],
+                                    datasets : [
+                                        @foreach(var item in loaiThietBi)
+                                        {                                
+                                            string jsonDataList = JsonSerializer.Serialize(list.Where(x => x.thietbi == item.Id).Select(x => x.soluong).ToList().Take(10));
+                                            var randomColor = $"rgba({new Random().Next(256)},{new Random().Next(256)},{new Random().Next(256)},{{opacity}})";
+                                            <text>
+                                                {
+                                                    fillColor : "@randomColor.Replace("{opacity}", "0.5")",
+                                                    strokeColor : "@randomColor.Replace("{opacity}", "1")",
+                                                    pointColor : "@randomColor.Replace("{opacity}", "1")",
+                                                    pointStrokeColor : "#fff",
+                                                    data : @Html.Raw(jsonDataList)
+                                                },
+                                            </text>
+                                        }
+                                    ]
+                                    };
+                                var line = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData);
+                            </script>
+                        </div>
+                    </div>
+                </div> *@
+            </div>
+        </div>
+    </section>
+</section>
+@section scripts {
+    <script src="~/assets/js/jquery.js"></script>
+    <script src="~/assets/js/jquery-1.8.3.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script class="include" type="text/javascript" src="~/assets/js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="~/assets/js/jquery.scrollTo.min.js"></script>
+    <script src="~/assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+    <script src="~/assets/js/jquery.sparkline.js"></script>
+
+
+    <!--common script for all pages-->
+    <script src="~/assets/js/common-scripts.js"></script>
+
+    <script type="text/javascript" src="~/assets/js/gritter/js/jquery.gritter.js"></script>
+    <script type="text/javascript" src="~/assets/js/gritter-conf.js"></script>
+
+    <!--script for this page-->
+    <script src="~/assets/js/sparkline-chart.js"></script>
+    <script src="~/assets/js/zabuto_calendar.js"></script>
+
+    @* <script type="text/javascript">
+        $(document).ready(function () {
+            var unique_id = $.gritter.add({
+                // (string | mandatory) the heading of the notification
+                title: 'Welcome to Dashgum!',
+                // (string | mandatory) the text inside the notification
+                text: 'Hover me to enable the Close Button. You can hide the left sidebar clicking on the button next to the logo. Free version for <a href="http://blacktie.co" target="_blank" style="color:#ffd777">BlackTie.co</a>.',
+                // (string | optional) the image to display on the left
+                image: 'assets/img/ui-sam.jpg',
+                // (bool | optional) if you want it to fade out on its own or just sit there
+                sticky: true,
+                // (int | optional) the time you want it to be alive for before fading out
+                time: '',
+                // (string | optional) the class name you want to apply to that specific message
+                class_name: 'my-sticky-class'
+            });
+
+            return false;
+        });
+    </script> *@
+
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $("#date-popover").popover({html: true, trigger: "manual"});
+            $("#date-popover").hide();
+            $("#date-popover").click(function (e) {
+                $(this).hide();
+            });
+
+            $("#my-calendar").zabuto_calendar({
+                action: function () {
+                    return myDateFunction(this.id, false);
+                },
+                action_nav: function () {
+                    return myNavFunction(this.id);
+                },
+                ajax: {
+                    url: "show_data.php?action=1",
+                    modal: true
+                },
+                legend: [
+                    {type: "text", label: "Special event", badge: "00"},
+                    {type: "block", label: "Regular event", }
+                ]
+            });
+        });
+
+
+        function myNavFunction(id) {
+            $("#date-popover").hide();
+            var nav = $("#" + id).data("navigation");
+            var to = $("#" + id).data("to");
+            console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
+        }
+    </script>
+}

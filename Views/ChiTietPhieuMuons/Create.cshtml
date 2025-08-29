@@ -1,0 +1,103 @@
+﻿@model CNPM.Models.ChiTietPhieuMuon
+<h1>Thêm Chi Tiết Phiếu Mượn</h1>
+@{
+    var xacnhan = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Chấp nhận", Value = "true" },
+                new SelectListItem { Text = "Không chấp nhận", Value = "false" }
+            };
+}
+<h4>Chi tiết phiếu mượn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="FForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IdPhieuMuon" class="control-label"></label>
+                <input asp-for="IdPhieuMuon" class="form-control" readonly value="@ViewBag.idPhieuMuon">
+                <span asp-validation-for="IdPhieuMuon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdThietBi" class="control-label"></label>
+                <select asp-for="IdThietBi" class ="form-control" asp-items="@ViewBag.IdThietBi"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoLuongMuon" class="control-label"></label>
+                <input asp-for="SoLuongMuon" class="form-control" min="0"/>
+                <span asp-validation-for="SoLuongMuon" class="text-danger"></span>
+            </div>
+            <input asp-for="NgayMuonThucTe" type="hidden" />
+            <input asp-for="NgayTraThucTe" type="hidden" />
+            <input asp-for="XacNhan" type="hidden" />
+            <input asp-for="moTa" type="hidden" />
+            <div class="form-group">
+                <input type="button" value="Tạo" onclick="return showModal()" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận tạo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a id="Index">Trở về danh sách</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+    // Bắt sự kiện khi nhấn vào thẻ <a>
+    $(document).ready(function () {
+        $("#Index").click(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("index")', // URL của action trả về Partial View 2
+                type: 'GET',
+                data: { idPhieuMuon: PhieuMuonId },
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+        $("#FForm").submit(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                    url: '@Url.Action("Create", "chitietphieumuons")', // URL của action trả về Partial View 2
+                type: 'POST',
+                    data: $(this).serialize() + '&PhieuMuonId=' + PhieuMuonId,
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+    });
+</script>
+}

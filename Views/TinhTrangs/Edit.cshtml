@@ -1,0 +1,52 @@
+﻿@model CNPM.Models.TinhTrang
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Chỉnh sửa</h1>
+
+<h4>Tình trạng</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="FForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="TenTinhTrang" class="control-label"></label>
+                <input asp-for="TenTinhTrang" class="form-control" />
+                <span asp-validation-for="TenTinhTrang" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Lưu" class="btn btn-primary" onclick="return showModal()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Trở về danh sách</a>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận sửa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

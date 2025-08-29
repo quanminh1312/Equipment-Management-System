@@ -1,0 +1,91 @@
+﻿@model CNPM.Models.ChiTietPhieuMuon
+<h1>Chi Tiết</h1>
+
+<div>
+    <h4>Chi tiết phiếu mượn</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết phiếu mượn</span>
+            @Html.DisplayFor(model => model.PhieuMuon.Id)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.PhieuMuon):</div><div class="price">@Html.DisplayFor(model => model.IdPhieuMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.ThietBi):</div><div class="price">@Html.DisplayFor(model => model.ThietBi.TenLoaiThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.SoLuongMuon):</div><div class="price">@Html.DisplayFor(model => model.SoLuongMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayMuonThucTe):</div><div class="price">@Html.DisplayFor(model => model.NgayMuonThucTe)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayTraThucTe):</div><div class="price">@Html.DisplayFor(model => model.NgayTraThucTe)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.XacNhan):</div>
+                    <div class="price">
+                        @if (Model.XacNhan == true)
+                        {
+                            <span>Xác nhận</span>
+                        }
+                        else if (Model.XacNhan == false)
+                        {
+                            <span>Không xác nhận</span>
+                        }
+                        else
+                        {
+                            <span>Chưa xác nhận</span>
+                        }
+                    </div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.moTa):</div><div class="price">@Html.DisplayFor(model => model.moTa)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+</div>
+<div>
+    @if (Model.XacNhan == null)
+    {
+        <a id="Edit" data-id="@Model?.Id" data-manage="@ViewBag.manage">Chỉnh sửa |</a>
+    }
+    <a id="Index" data-manage="@ViewBag.manage">Trở về danh sách</a>
+</div>
+@section Scripts
+{
+<script type="text/javascript">
+    // Bắt sự kiện khi nhấn vào thẻ <a>
+    $(document).ready(function () {
+        $("#Index").click(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var manage = $(this).data('manage');
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("index")', // URL của action trả về Partial View 2
+                type: 'GET',
+                data: { idPhieuMuon: PhieuMuonId, manage: manage },
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+        $("#Edit").click(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var dataId = $(this).data('id');
+            var manage = $(this).data('manage');
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("edit")', // URL của action trả về Partial View 2
+                type: 'GET',
+                data: { id: dataId , manage: manage},
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+    });
+</script>
+}

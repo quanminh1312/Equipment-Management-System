@@ -1,0 +1,35 @@
+﻿@model CNPM.Models.LoaiThietBi
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Chi tiết</h1>
+
+<div>
+    <h4>Loại thiết bị</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết loại thiết bị</span>
+            @Html.DisplayFor(model => model.TenLoaiThietBi)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.TenLoaiThietBi):</div><div class="price">@Html.DisplayFor(model => model.TenLoaiThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.SoLuong):</div><div class="price">@Html.DisplayFor(model => model.SoLuong)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.MoTa):</div><div class="price">@Html.DisplayFor(model => model.MoTa)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+</div>
+<div>
+    @if (User.IsInRole("ad") || User.IsInRole("tk"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa </a>
+    }
+    <a asp-action="Index">Trở về danh sách</a>
+</div>

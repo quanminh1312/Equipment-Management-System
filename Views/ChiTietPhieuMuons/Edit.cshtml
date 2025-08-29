@@ -1,0 +1,250 @@
+﻿@model CNPM.Models.ChiTietPhieuMuon
+<h1>Chỉnh sửa chi tiết phiếu mượn</h1>
+@{
+    var xacnhan = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Chấp nhận", Value = "true" },
+                new SelectListItem { Text = "Không chấp nhận", Value = "false" }
+            };
+}
+<h4>Chi tiết phiếu mượn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="FForm" data-manage="@ViewBag.manage" data-id="@Model.Id">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            @if (ViewBag.manage == false && !User.IsInRole("tk"))
+            {
+                <input asp-for="NgayMuonThucTe" type="hidden" />
+                <input asp-for="NgayTraThucTe" type="hidden" />
+                <input asp-for="XacNhan" type="hidden" />
+                <input asp-for="moTa" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="IdPhieuMuon" class="control-label"></label>
+                    <input asp-for="IdPhieuMuon" class="form-control" readonly value="@Model.IdPhieuMuon">
+                    <span asp-validation-for="IdPhieuMuon" class="text-danger"></span>
+                </div>
+                if (Model.XacNhan == null)
+                {
+                    <div class="form-group">
+                        <label asp-for="IdThietBi" class="control-label"></label>
+                        <select asp-for="IdThietBi" class="form-control" asp-items="@ViewBag.IdThietBi"></select>
+                        <span asp-validation-for="IdThietBi" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SoLuongMuon" class="control-label"></label>
+                        <input asp-for="SoLuongMuon" class="form-control" />
+                        <span asp-validation-for="SoLuongMuon" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input asp-for="IdThietBi" type="hidden" />
+                    <div class="form-group">
+                        <label asp-for="ThietBi" class="control-label"></label>
+                        <input asp-for="ThietBi" class="form-control" readonly disabled value="@ViewBag.TenLoaiThietBi">
+                        <span asp-validation-for="ThietBi" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SoLuongMuon" class="control-label"></label>
+                        <input asp-for="SoLuongMuon" class="form-control" readonly/>
+                        <span asp-validation-for="SoLuongMuon" class="text-danger"></span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="IdPhieuMuon" class="control-label"></label>
+                    <input asp-for="IdPhieuMuon" class="form-control" readonly value="@Model.IdPhieuMuon">
+                    <span asp-validation-for="IdPhieuMuon" class="text-danger"></span>
+                </div>
+                <input asp-for="IdThietBi" type="hidden" />
+                <div class="form-group">
+                    <label asp-for="ThietBi" class="control-label"></label>
+                    <input asp-for="ThietBi" class="form-control" readonly disabled value="@ViewBag.TenLoaiThietBi">
+                    <span asp-validation-for="ThietBi" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SoLuongMuon" class="control-label"></label>
+                    <input asp-for="SoLuongMuon" class="form-control" readonly/>
+                    <span asp-validation-for="SoLuongMuon" class="text-danger"></span>
+                </div>
+                if (Model.NgayMuonThucTe != null)
+                {
+                    <div class="form-group">
+                        <label asp-for="NgayMuonThucTe" class="control-label"></label>
+                        <input asp-for="NgayMuonThucTe" class="form-control" readonly />
+                        <span asp-validation-for="NgayMuonThucTe" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="NgayMuonThucTe" class="control-label"></label>
+                        <input asp-for="NgayMuonThucTe" id="NgayMuonThucTe" class="form-control" type="hidden" />
+                        <a id="btnNgayMuonThucTe" class="btn btn-primary">Xác nhận đã đến lấy thiết bị</a>
+                        <span asp-validation-for="NgayMuonThucTe" class="text-danger"></span>
+                    </div>
+                }
+                if (Model.NgayTraThucTe != null)
+                {
+                    <div class="form-group">
+                        <label asp-for="NgayTraThucTe" class="control-label"></label>
+                        <input asp-for="NgayTraThucTe" class="form-control" readonly />
+                        <span asp-validation-for="NgayTraThucTe" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="NgayTraThucTe" class="control-label"></label>
+                        <input asp-for="NgayTraThucTe" id="NgayTraThucTe" class="form-control" type="hidden" />
+                        <a id="btnNgayTraThucTe" class="btn btn-primary">Xác nhận đã trả thiết bị</a>
+                        <span asp-validation-for="NgayTraThucTe" class="text-danger"></span>
+                    </div>
+                }
+                if (Model.XacNhan != null)
+                {
+                    <div class="form-group">
+                        <label asp-for="XacNhan" class="control-label"></label>
+                        <input asp-for="XacNhan" class="form-control" value="@Model.XacNhan" readonly type="hidden">
+                        @if (Model.XacNhan == true)
+                        {
+                            <input class="form-control" value="chấp nhận" disabled />
+                        }
+                        else if (Model.XacNhan == false)
+                        {
+                            <input class="form-control" value="không chấp nhận" disabled />
+                        }
+                        else
+                        {
+                            <input  class="form-control" value="chưa xác nhận" disabled />
+                        }
+                        <span asp-validation-for="XacNhan" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="XacNhan" class="control-label"></label>
+                        <select asp-for="XacNhan" class="form-control" asp-items="@xacnhan"></select>
+                        <span asp-validation-for="XacNhan" class="text-danger"></span>
+                    </div>
+                }
+                if (Model.moTa != null)
+                {
+                    <div class="form-group">
+                        <label asp-for="moTa" class="control-label"></label>
+                        <input asp-for="moTa" class="form-control" readonly value="@Model.moTa" />
+                        <span asp-validation-for="moTa" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="moTa" class="control-label"></label>
+                        <input asp-for="moTa" class="form-control" />
+                        <span asp-validation-for="moTa" class="text-danger"></span>
+                    </div>
+                }
+            }
+            @* @if (!User.IsInRole("tk"))
+            { *@
+                <div class="form-group">
+                    <input type="button" onclick="return showModal()" value="Lưu" class="btn btn-primary" />
+            </div>
+            @* } *@
+        </form>
+    </div>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận sửa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a id="Index" data-mange="@ViewBag.manage">Trở về danh sách</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script type="text/javascript">
+    // Bắt sự kiện khi nhấn vào thẻ <a>
+    $(document).ready(function () {
+        $("#Index").click(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var manage = $(this).data("manage");
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("index")', // URL của action trả về Partial View 2
+                type: 'GET',
+                data: { idPhieuMuon: PhieuMuonId, manage: manage },
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+        $("#FForm").submit(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var manage = $(this).data("manage");
+            var id = $(this).data("id");
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("edit")', // URL của action trả về Partial View 2
+                type: 'POST',
+                    data: $(this).serialize() + '&PhieuMuonId=' + PhieuMuonId + '&manage=' + manage + '&id=' + id,
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Error: " + textStatus + " " + errorThrown);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $("#btnNgayMuonThucTe").on("click", function () {
+        // Tắt button
+        $(this).prop("disabled", true);
+        $(this).css("pointer-events", "none"); // Tắt hover trên button
+        $(this).css("opacity", "0.5"); // Làm button mờ đi (tối màu)
+
+        // Thay đổi văn bản của button
+        $(this).text("Đang xử lý...");
+        ngayMuon = true;
+        showModal();
+    });
+    $("#btnNgayTraThucTe").on("click", function () {
+        // Tắt button
+            $(this).prop("disabled", true); 
+            $(this).css("pointer-events", "none"); // Tắt hover trên button
+            $(this).css("opacity", "0.5"); // Làm button mờ đi (tối màu)
+
+        // Thay đổi văn bản của button
+        $(this).text("Đang xử lý...");
+        ngayTra = true;
+        showModal();
+    });
+</script>
+}

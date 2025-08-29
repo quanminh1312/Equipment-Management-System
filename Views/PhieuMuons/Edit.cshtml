@@ -1,0 +1,94 @@
+﻿@model CNPM.Models.PhieuMuon
+@inject AppDbContext _context
+@{
+    ViewData["Title"] = "Edit";
+    var tennguoidung = _context.NguoiDungs.FirstOrDefault(n => n.Id == Model.IdNguoiMuon).TenNguoiDung;
+    bool xacnhan = _context.ChiTietPhieuMuons.Where(c => c.XacNhan != null).Any(c => c.IdPhieuMuon == Model.Id);
+}
+
+<h1>Chỉnh sửa</h1>
+
+<h4>Phiếu mượn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="FForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="IdNguoiMuon" />
+            <input type="hidden" class="form-control" value="@ViewBag.manage"/>
+            <div class="form-group">
+                <label asp-for="NguoiMuon" class="control-label"></label>
+                <input asp-for="NguoiMuon" class="form-control" readonly disabled value="@tennguoidung" />
+                <span asp-validation-for="NguoiMuon" class="text-danger"></span>
+            </div>
+            @if (xacnhan)
+            {
+
+                <div class="form-group">
+                    <label asp-for="NgayLapPhieuMuon" class="control-label"></label>
+                    <input asp-for="NgayLapPhieuMuon" class="form-control" readonly />
+                    <span asp-validation-for="NgayLapPhieuMuon" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NgayMuon" class="control-label"></label>
+                    <input asp-for="NgayMuon" class="form-control" min="@DateTime.Today" readonly/>
+                    <span asp-validation-for="NgayMuon" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NgayHenTra" class="control-label"></label>
+                    <input asp-for="NgayHenTra" class="form-control" min="@DateTime.Today" readonly/>
+                    <span asp-validation-for="NgayHenTra" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+
+                <div class="form-group">
+                    <label asp-for="NgayLapPhieuMuon" class="control-label"></label>
+                    <input asp-for="NgayLapPhieuMuon" class="form-control" readonly />
+                    <span asp-validation-for="NgayLapPhieuMuon" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NgayMuon" class="control-label"></label>
+                    <input asp-for="NgayMuon" class="form-control" min="@DateTime.Today" />
+                    <span asp-validation-for="NgayMuon" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NgayHenTra" class="control-label"></label>
+                    <input asp-for="NgayHenTra" class="form-control" min="@DateTime.Today" />
+                    <span asp-validation-for="NgayHenTra" class="text-danger"></span>
+                </div>
+            }
+            <div class="form-group">
+                <input type="button" value="Lưu" class="btn btn-primary" onclick="return showModal()" />
+            </div>
+        </form>
+    </div>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận sửa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index" asp-route-manage="@ViewBag.manage">Trở về danh sách</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

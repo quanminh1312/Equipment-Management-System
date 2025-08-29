@@ -1,0 +1,229 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CNPM.Models
+
+@inject UserManager<TaiKhoan> _userManager
+@inject RoleManager<IdentityRole> _roleManager
+@inject SignInManager<TaiKhoan> _signInManager
+@inject AppDbContext _context
+
+@functions{
+    public class ControllerModel
+    {
+        public string? Controller { get; set; }
+        public string? ControllerPreview { get; set; }
+        public List<ActionModel>? Actions { get; set; }
+        public ControllerModel(string controller, string controllerPreview) 
+        { 
+            Controller = controller;
+            ControllerPreview = controllerPreview;
+            Actions = new List<ActionModel>();
+        }
+        public void AddAction(ActionModel action)
+        {
+            Actions!.Add(action);
+        }
+
+    }
+    public class ActionModel
+    {
+        public string? Action { get; set; }
+        public string? ActionPreview { get; set; }
+        public Dictionary<string, dynamic> Data { get; set; }
+        public ActionModel(string action, string actionPreview)
+        {
+            Action = action;
+            ActionPreview = actionPreview;
+            Data = new Dictionary<string, dynamic>();
+        }
+        public void AddData(string key, string value)
+        {
+            Data.Add(key, value);
+        }
+    }
+    public List<ControllerModel>? Items { get; set; }
+    public void OnGet()
+    {
+        if (_signInManager.IsSignedIn(User))
+        {
+            if (User.IsInRole("ad"))
+            {
+                ControllerModel thukho = new ControllerModel("ThuKhoes", "~/images/icons/thukhoes.ico");
+                thukho.AddAction(new ActionModel("Index", "Danh sách thủ kho"));
+                Items.Add(thukho);
+
+                ControllerModel giangVien = new ControllerModel("GiangViens", "~/images/icons/giangviens.ico");
+                giangVien.AddAction(new ActionModel("Index", "Danh sách giảng viên"));
+                Items.Add(giangVien);
+
+                ControllerModel sinhVien = new ControllerModel("SinhViens", "~/images/icons/sinhviens.ico");
+                sinhVien.AddAction(new ActionModel("Index", "Danh sách sinh viên"));
+                Items.Add(sinhVien);
+
+                ControllerModel loaiThietBi = new ControllerModel("LoaiThietBis", "~/images/icons/loaithietbis.ico");
+                loaiThietBi.AddAction(new ActionModel("Index", "Danh sách loại thiết bị"));
+                loaiThietBi.AddAction(new ActionModel("Create", "Thêm loại thiết bị"));
+                Items.Add(loaiThietBi);
+
+                ControllerModel thietBi = new ControllerModel("ThietBis", "~/images/icons/thietbis.ico");
+                thietBi.AddAction(new ActionModel("Index", "Danh sách thiết bị"));
+                thietBi.AddAction(new ActionModel("Create", "Thêm thiết bị"));
+                Items.Add(thietBi);
+
+                ControllerModel tinhTrang = new ControllerModel("TinhTrangs", "~/images/icons/tinhtrangs.ico");
+                tinhTrang.AddAction(new ActionModel("Index", "Danh sách tình trạng"));
+                tinhTrang.AddAction(new ActionModel("Create", "Thêm tình trạng"));
+                Items.Add(tinhTrang);
+
+            }
+            else if (User.IsInRole("gv"))
+            {
+                //get id of nguoidung of current user
+                int id = _context.GiangViens.Where(gv => gv.IdTaiKhoan == _userManager.GetUserId(User)).FirstOrDefault().Id;
+
+                ControllerModel giangViens = new ControllerModel("GiangViens", "~/images/icons/giangviens.ico");
+                giangViens.AddAction(new ActionModel("Details", "Xem thông tin cá nhân"));
+                giangViens.Actions.Last().Data.Add("id", id);
+                giangViens.AddAction(new ActionModel("Edit", "Chỉnh sửa thông tin cá nhân"));
+                giangViens.Actions.Last().Data.Add("id", id);
+                Items.Add(giangViens);
+
+                ControllerModel phieuMuon = new ControllerModel("PhieuMuons", "~/images/icons/phieumuons.ico");
+                phieuMuon.AddAction(new ActionModel("Create", "Tạo phiếu mượn"));
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đợi duyệt"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Pending.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đang mượn"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Accepted.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đã kết thúc"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Finished.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Tất cả phiếu mượn"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.All.ToString());
+                Items.Add(phieuMuon);
+                
+
+                ControllerModel thietBi = new ControllerModel("LoaiThietBis", "~/images/icons/loaithietbis.ico");
+                thietBi.AddAction(new ActionModel("Index", "Danh sách thiết bị"));
+                Items.Add(thietBi);
+
+            }
+            else if (User.IsInRole("sv"))
+            {
+                int id = _context.sinhViens.Where(gv => gv.IdTaiKhoan == _userManager.GetUserId(User)).FirstOrDefault().Id;
+                ControllerModel sinhVien = new ControllerModel("sinhviens", "~/images/icons/sinhviens.ico");
+                sinhVien.AddAction(new ActionModel("Details", "Xem thông tin cá nhân"));
+                sinhVien.Actions.Last().Data.Add("id", id);
+                sinhVien.AddAction(new ActionModel("Edit", "Chỉnh sửa thông tin cá nhân"));
+                sinhVien.Actions.Last().Data.Add("id", id);
+                Items.Add(sinhVien);
+
+                ControllerModel phieuMuon = new ControllerModel("PhieuMuons", "~/images/icons/phieumuons.ico");
+                phieuMuon.AddAction(new ActionModel("Create", "Tạo phiếu mượn"));
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đợi duyệt"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Pending.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đang mượn"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Accepted.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Danh sách phiếu đã kết thúc"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.Finished.ToString());
+                phieuMuon.AddAction(new ActionModel("Index", "Tất cả phiếu mượn"));
+                phieuMuon.Actions.Last().Data.Add("status", Utils.Status.All.ToString());
+                Items.Add(phieuMuon);
+
+                ControllerModel thietBi = new ControllerModel("LoaiThietBis", "~/images/icons/loaithietbis.ico");
+                thietBi.AddAction(new ActionModel("Index", "Danh sách thiết bị"));
+                Items.Add(thietBi);
+            }
+            else if (User.IsInRole("tk"))
+            {
+                int id = _context.ThuKhos.Where(gv => gv.IdTaiKhoan == _userManager.GetUserId(User)).FirstOrDefault().Id;
+                ControllerModel thukho = new ControllerModel("thukhoes", "~/images/icons/thukhoes.ico");
+                thukho.AddAction(new ActionModel("Details", "Xem thông tin cá nhân"));
+                thukho.Actions.Last().Data.Add("id", id);
+                thukho.AddAction(new ActionModel("Edit", "Chỉnh sửa thông tin cá nhân"));
+                thukho.Actions.Last().Data.Add("id", id);
+                Items.Add(thukho);
+
+
+                ControllerModel duyet = new ControllerModel("PhieuMuons", "~/images/icons/chitietphieumuons.ico");
+                duyet.AddAction(new ActionModel("Index", "Danh sách phiếu đợi duyệt"));
+                duyet.Actions.Last().Data.Add("status", Utils.Status.Pending.ToString());
+                duyet.Actions.Last().Data.Add("manage", "true");
+                duyet.AddAction(new ActionModel("Index", "Danh sách phiếu mượn chưa trả"));
+                duyet.Actions.Last().Data.Add("status", Utils.Status.Accepted.ToString());
+                duyet.Actions.Last().Data.Add("manage", "true");
+                duyet.AddAction(new ActionModel("Index", "Danh sách tất cả phiếu mượn"));
+                duyet.Actions.Last().Data.Add("status", Utils.Status.All.ToString());
+                duyet.Actions.Last().Data.Add("manage", "true");
+                Items.Add(duyet);
+
+                ControllerModel loaiThietBi = new ControllerModel("LoaiThietBis", "~/images/icons/loaithietbis.ico");
+                loaiThietBi.AddAction(new ActionModel("Index", "Danh sách loại thiết bị"));
+                loaiThietBi.AddAction(new ActionModel("Create", "Thêm loại thiết bị"));
+                Items.Add(loaiThietBi);
+
+                ControllerModel thietBi = new ControllerModel("ThietBis", "~/images/icons/thietbis.ico");
+                thietBi.AddAction(new ActionModel("Index", "Danh sách thiết bị"));
+                thietBi.AddAction(new ActionModel("Create", "Thêm thiết bị"));
+                Items.Add(thietBi);
+            }
+        }
+    }
+}
+
+@if (_signInManager.IsSignedIn(User))
+{            
+    this.Items = new List<ControllerModel>();
+    this.OnGet();  
+    @foreach (var item in Items)
+    {
+        @* <li class="nav-item dropdown">
+            @if (item.Actions != null)
+            {
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="@Url.Content(item.ControllerPreview)" alt="Icon" style="width: 32px; height: 32px; vertical-align: middle;" />
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    @foreach (var action in item.Actions)
+                    {
+                        <li>
+                            <a class="dropdown-item" href="@Url.Action(action.Action, item.Controller, action.Data)">
+                                @action.ActionPreview
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </li> *@
+        <li>
+            @if (item.Actions != null)
+            {
+                <a href="@Url.Action(item.Actions[0].Action, item.Controller, item.Actions[0].Data)">
+                    <img src="@Url.Content(item.ControllerPreview)" alt="Icon" style="width: 32px; height: 32px; vertical-align: middle;" />
+                    </a>
+                <i class='bx bxs-chevron-down js-arrow arrow '></i>
+                <ul class="js-sub-menu sub-menu">
+                    @foreach (var action in item.Actions)
+                    {
+                        <li>
+                            <a href="@Url.Action(action.Action, item.Controller, action.Data)">
+                                @action.ActionPreview
+                            </a>
+                        </li>
+                    }
+                @* <li class="more">
+                    <span>
+                        <a href="#">More</a>
+                        <i class='bx bxs-chevron-right arrow more-arrow'></i>
+                    </span>
+                    <ul class="more-sub-menu sub-menu">
+                        <li><a href="#">Neumorphism</a></li>
+                        <li><a href="#">Pre-loader</a></li>
+                        <li><a href="#">Glassmorphism</a></li>
+                    </ul>
+                </li> *@
+            </ul>
+            }
+        </li>
+    }
+}
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+}

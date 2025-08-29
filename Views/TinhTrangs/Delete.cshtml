@@ -1,0 +1,52 @@
+﻿@model CNPM.Models.TinhTrang
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Xóa</h1>
+
+<h3>Bạn có chắc chắn muốn xóa?</h3>
+<div>
+    <h4>Tình trạng</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết tình trạng</span>
+            @Html.DisplayFor(model => model.TenTinhTrang)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.TenTinhTrang):</div><div class="price">@Html.DisplayFor(model => model.TenTinhTrang)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+    
+    <form asp-action="Delete" id="FForm" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="button" value="Xóa" class="btn btn-danger" onclick="return showModal()" /> |
+        <a asp-action="Index">Trở về danh sách</a>
+    </form>
+    <div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn không?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close">Hủy</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

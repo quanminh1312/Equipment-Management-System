@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CNPM.Models
+
+@inject SignInManager<TaiKhoan> SignInManager
+@inject UserManager<TaiKhoan> UserManager
+@inject AppDbContext _context
+
+@if (SignInManager.IsSignedIn(User))
+{
+        var user = await @UserManager.GetUserAsync(User);
+        string? tenDangNhap = user!.TenDangNhap;
+        string controller = "";
+        if (User.IsInRole("ad"))
+        {
+            controller = "/Home";
+        }
+        else if (User.IsInRole("sv"))
+        {
+            controller = "/sinhviens";
+        }
+        else if (User.IsInRole("gv"))
+        {
+            controller = "/giangviens";
+        }
+        else if (User.IsInRole("tk"))
+        {
+            controller = "/thukhos";
+        }
+        <li>
+        @if (User.IsInRole("ad"))
+        {
+            <a id="manage" asp-controller="@controller" asp-action="Index" title="Manage">Xin Chào @tenDangNhap !</a>
+        }
+        else    
+        {
+            var nguoiDung = _context.NguoiDungs.Where(x => x.IdTaiKhoan == user.Id).FirstOrDefault();
+            <a id="manage" asp-controller="@controller" asp-action="details" asp-route-id="@nguoiDung.Id" title="Manage">Xin Chào @tenDangNhap !</a>
+        }
+    </li>
+    <li>
+        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Đăng xuất</button>
+        </form>
+    </li>
+}
+else
+{
+    <li>
+        <a  id="register" asp-area="Identity" asp-page="/Account/Register">Đăng Ký</a>
+    </li>
+    <li>
+        <a id="login" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+    </li>
+}

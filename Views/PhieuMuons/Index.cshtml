@@ -1,0 +1,108 @@
+﻿@model IEnumerable<CNPM.Models.PhieuMuon>
+@inject AppDbContext _context
+@{
+    ViewData["Title"] = "Index";
+}
+@functions
+{
+    private string TrangThai(int? id)
+    {
+        if (id == null) return "";
+        string trangThai = "";
+        var chiTietPhieuMuons = _context.ChiTietPhieuMuons.Where(c => c.IdPhieuMuon == id);
+        if (chiTietPhieuMuons.Any(c => c.XacNhan == null) || chiTietPhieuMuons == null || chiTietPhieuMuons.Count() == 0)
+        {
+            trangThai = "Chờ xác nhận";
+        }
+        if (chiTietPhieuMuons.Any(c => c.XacNhan != null))
+        {
+            trangThai = "Đã xác nhận";
+        }
+        if (chiTietPhieuMuons.Any(c => c.NgayTraThucTe == null && c.NgayMuonThucTe != null))
+        {
+            trangThai = "Đang mượn";
+        }
+        if (!chiTietPhieuMuons.Any(c => (c.NgayTraThucTe == null && c.XacNhan == true) || c.XacNhan == null) && chiTietPhieuMuons != null && chiTietPhieuMuons.Count() != 0)
+    {
+            trangThai = "Đã hoàn thành";
+        }
+        return trangThai;
+    }
+}
+<h1>Danh Sách</h1>
+<link rel="stylesheet" href="~/css/tableSortable.css">
+<div id="wrapper">
+    <h1>Bảng phiếu mượn</h1>
+
+    <table id="keywords" cellspacing="0" cellpadding="0">
+        <thead>
+            <tr>
+            <th>
+                    <span>@Html.DisplayNameFor(model => model.NguoiMuon)</span>
+            </th>
+            <th>
+                    <span>@Html.DisplayNameFor(model => model.NgayLapPhieuMuon)</span>
+            </th>
+            <th>
+                    <span>@Html.DisplayNameFor(model => model.NgayMuon)</span>
+            </th>
+            <th>
+                    <span>@Html.DisplayNameFor(model => model.NgayHenTra)</span>
+            </th>
+            <th>Trạng thái:</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td class="lalign">
+                @Html.DisplayFor(modelItem => _context.NguoiDungs.FirstOrDefault(n => n.Id == item.IdNguoiMuon).TenNguoiDung)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayLapPhieuMuon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayMuon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayHenTra)
+            </td>
+            <td>
+                @TrangThai(item.Id)
+            </td>
+            <td>
+                @if(User.IsInRole("tk") && ViewBag.manage == true)
+                {
+                    <a asp-action= "Details" asp-route-id = "@item.Id" asp-route-manage= "@ViewBag.manage"> Duyệt phiếu </a>
+                } else
+                {
+                    if (TrangThai(item.Id) == "Chờ xác nhận" || TrangThai(item.Id) == "Đã xác nhận")
+                    {
+                        if (TrangThai(item.Id) == "Chờ xác nhận")
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-manage="@ViewBag.manage"> Chỉnh sửa  |</a>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Id" asp-route-manage="@ViewBag.manage"> Chi tiết  |</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" asp-route-manage="@ViewBag.manage"> Xóa </a>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id" asp-route-manage="@ViewBag.manage"> Chi tiết </a>
+                    }
+                }
+                
+            </td>
+        </tr>
+}
+    </tbody>
+    </table>
+</div>
+@section Scripts {
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.28.14/js/jquery.tablesorter.min.js'></script>
+    <script>
+        $(function () {
+            $('#keywords').tablesorter();
+        });
+    </script>
+}

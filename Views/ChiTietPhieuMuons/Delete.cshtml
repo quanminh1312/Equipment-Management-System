@@ -1,0 +1,112 @@
+﻿@model CNPM.Models.ChiTietPhieuMuon
+<h1>Xóa Chi Tiết Phiếu Mượn</h1>
+
+<h3>Bạn có chắc chắn muốn xóa?</h3>
+<div>
+    <h4>Chi tiết phiếu mượn</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết phiếu mượn</span>
+            @Html.DisplayFor(model => model.Id)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.PhieuMuon):</div><div class="price">@Html.DisplayFor(model => model.IdPhieuMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.ThietBi):</div><div class="price">@Html.DisplayFor(model => model.ThietBi.TenLoaiThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.SoLuongMuon):</div><div class="price">@Html.DisplayFor(model => model.SoLuongMuon)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayMuonThucTe):</div><div class="price">@Html.DisplayFor(model => model.NgayMuonThucTe)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NgayTraThucTe):</div><div class="price">@Html.DisplayFor(model => model.NgayTraThucTe)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.XacNhan):</div>
+                    <div class="price">
+                        @if (Model.XacNhan == true)
+                        {
+                            <span>Xác nhận</span>
+                        }
+                        else if (Model.XacNhan == false)
+                        {
+                            <span>Không xác nhận</span>
+                        }
+                        else
+                        {
+                            <span>Chưa xác nhận</span>
+                        }
+                    </div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.moTa):</div><div class="price">@Html.DisplayFor(model => model.moTa)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+
+    <form id="FForm" data-id="@Model.Id" data-manage="@ViewBag.manage">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" name="manage" value="@ViewBag.manage" />
+        <input type="button" onclick="return showModal()" value="Xóa" class="btn btn-danger" /> |
+        <a id="Index" data-manage="@ViewBag.manage">Trở về danh sách</a>
+    </form>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+<script type="text/javascript">
+    // Bắt sự kiện khi nhấn vào thẻ <a>
+    $(document).ready(function () {
+        $("#Index").click(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var manage = $(this).data("manage");
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("index")', // URL của action trả về Partial View 2
+                type: 'GET',
+                data: { idPhieuMuon: PhieuMuonId , manage: manage },
+                success: function (data) {
+                    // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+        $("#FForm").submit(function (event) {
+            event.preventDefault(); // Ngăn không làm mới trang
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var id = $(this).data("id");
+            var manage = $(this).data("manage");
+            // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+            $.ajax({
+                url: '@Url.Action("Delete")', // URL của action trả về Partial View 2
+                type: 'POST',
+                    data: $("#Delete").serialize() + '&__RequestVerificationToken=' + token + '&id=' + id + '&manage=' + manage,
+                success: function (data) {
+                    $("#partial-content").html(data);
+                },
+                error: function () {
+                    alert("Error loading content.");
+                }
+            });
+        });
+    });
+</script>
+}

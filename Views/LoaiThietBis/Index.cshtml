@@ -1,0 +1,101 @@
+﻿@using System.Text.Json;
+@model IEnumerable<CNPM.Models.LoaiThietBi>
+
+@{
+    ViewData["Title"] = "Danh sách phiếu mượn";
+    var list = ViewData["list"] as List<CNPM.Controllers.ChiTietPhieuMuonModel>;
+    var thietBiHongs = ViewData["thietBiHong"] as List<CNPM.Controllers.thietBiHong>;
+}
+
+<h1>Danh sách loại thiết bị</h1>
+@if (User.IsInRole("tk") || User.IsInRole("ad"))
+{
+    <p>
+        <a asp-action="Create">Tạo loại thiết bị mới</a>
+    </p>
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="~/css/Table.css">
+<div class="table-users">
+    <div class="header">Loại thiết bị</div>
+
+    <table cellspacing="0">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TenLoaiThietBi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoLuong)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MoTa)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        string jsonDataList = JsonSerializer.Serialize(list.Where(x => x.thietbi == item.Id).ToList());
+        int thietbiHong = 0;
+        if (thietBiHongs != null)
+            thietbiHong = thietBiHongs.Where(x => x.id == item.Id).Select(x => x.sl).FirstOrDefault(0);
+        string total = (item.SoLuong - thietbiHong).ToString();
+        <tr>
+                <td onclick='XemLich(@Html.Raw(jsonDataList),@total)'>
+                @Html.DisplayFor(modelItem => item.TenLoaiThietBi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuong)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MoTa)
+            </td>
+            <td>
+                @if (User.IsInRole("sv") || User.IsInRole("gv"))
+                {
+                    <a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a>
+                }
+                else
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Chỉnh sửa</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+                }
+            </td>
+        </tr>
+}
+        </tbody>
+    </table>
+</div>
+<div class="calendar"></div>
+<script>
+    let calendarControlObject;
+    document.addEventListener("DOMContentLoaded", function () {
+        calendarControlObject = new CalendarControl();
+        calendarControlObject.init();
+    });
+    function XemLich(dataList,total) {
+        console.log(dataList);
+        calendarControlObject.AddRangesData(dataList,total);
+    }
+    function GetStartEndDate() {
+        const dat = calendarControlObject.GetStartEndDate();
+        if (!dat.start && !dat.end) {
+            return null;
+        }
+        if (!dat.start) { 
+            return { start: dat.end, end: dat.end };
+        }
+        if (!dat.end) {
+            return { start: dat.start, end: dat.start };
+        }
+        else if (dat.start < dat.end) {
+            return { start: dat.start, end: dat.end };
+        }
+        else {
+            return { start: dat.end, end: dat.start };
+        }
+    }
+</script>
+<link href="~/css/calendar.css" rel="stylesheet" />
+<script src="~/js/calendar.js"></script>

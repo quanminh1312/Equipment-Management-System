@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model CNPM.Models.PhieuMuon
+@inject AppDbContext context
+@inject UserManager<TaiKhoan> UserManager
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Thêm mới</h1>
+
+<h4>Phiếu Mượn</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="FForm" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NguoiMuon" class="control-label"></label>
+                <input asp-for="NguoiMuon" class="form-control" readonly disabled value="@context.NguoiDungs.FirstOrDefault(n => n.IdTaiKhoan == UserManager.GetUserAsync(User).Result.Id).TenNguoiDung" />
+                <span asp-validation-for="NguoiMuon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayLapPhieuMuon" class="control-label"></label>
+                <input asp-for="NgayLapPhieuMuon" class="form-control" readonly value="@DateOnly.FromDateTime(DateTime.Now)" />
+                <span asp-validation-for="NgayLapPhieuMuon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayMuon" class="control-label"></label>
+                <input asp-for="NgayMuon" class="form-control" min="@DateTime.Today"/>
+                <span asp-validation-for="NgayMuon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayHenTra" class="control-label"></label>
+                <input asp-for="NgayHenTra" class="form-control" min="@DateTime.Today" />
+                <span asp-validation-for="NgayHenTra" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="button" value="Thêm" class="btn btn-primary" onclick="return showModal()" />
+            </div>
+        </form>
+    </div>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận tạo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Trở về danh sách</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

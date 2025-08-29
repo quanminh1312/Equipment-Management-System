@@ -1,0 +1,152 @@
+﻿@model IEnumerable<CNPM.Models.ChiTietPhieuMuon>
+<h1>danh sách chi tiết phiếu mượn</h1>
+
+@if (ViewBag.manage != true || !User.IsInRole("tk"))
+{
+    <p>
+        <a id="Create" class="eyebrow">Tạo thêm chi tiết phiếu mượn</a>
+    </p>
+}
+<link rel="stylesheet" href="~/css/tableSortable.css">
+<div id="wrapper">
+    <div class="table">
+        <section>
+            @foreach (var item in Model)
+            {
+                <details class="card">
+                    <summary class="property lightblue">
+                    <span class="eyebrow">Chi tiết phiếu mượn</span>
+                        @Html.DisplayFor(modelItem => item.Id)
+                </summary>
+                <div class="priceTable">
+                        <div class="qty">@Html.DisplayNameFor(model => model.PhieuMuon):</div><div class="price">@Html.DisplayFor(modelItem => item.IdPhieuMuon)</div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.ThietBi):</div><div class="price">@Html.DisplayFor(modelItem => item.ThietBi.TenLoaiThietBi)</div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.SoLuongMuon):</div><div class="price">@Html.DisplayFor(modelItem => item.SoLuongMuon)</div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.NgayMuonThucTe):</div><div class="price">@Html.DisplayFor(modelItem => item.NgayMuonThucTe)</div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.NgayTraThucTe):</div><div class="price">@Html.DisplayFor(modelItem => item.NgayTraThucTe)</div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.XacNhan):</div>
+                        <div class="price">
+                            @if (item.XacNhan == true)
+                            {
+                                <span>Xác nhận</span>
+                            }
+                            else if (item.XacNhan == false)
+                            {
+                                <span>Không xác nhận</span>
+                            }
+                            else
+                            {
+                                <span>Chưa xác nhận</span>
+                            }
+                        </div>
+                        <div class="qty">@Html.DisplayNameFor(model => model.moTa):</div><div class="price">@Html.DisplayFor(modelItem => item.moTa)</div>
+                        <div class="qty">Hành động:</div><div class="price">
+                            @if (ViewBag.manage == false)
+                            {
+                                if (item.XacNhan == null)
+                                {
+                                <a class="Edit" data-id="@item.Id" data-manage="@ViewBag.manage">Sửa |</a>
+                                }
+                                <a class="Details" data-id="@item.Id" data-manage="@ViewBag.manage">Chi Tiết</a>
+                                if (item.NgayMuonThucTe == null)
+                                {
+                                <a class="Delete" data-id="@item.Id" data-manage="@ViewBag.manage">| Xóa</a>
+                                }
+                            }
+                            else
+                            {
+                                <a class="Edit" data-id="@item.Id" data-manage="@ViewBag.manage">Duyệt |</a>
+                                <a class="Details" data-id="@item.Id" data-manage="@ViewBag.manage">Chi Tiết |</a>
+                            }
+                        </div>
+                </div>
+            </details>
+            }
+        </section>
+    </div>
+</div>
+@section Scripts
+{
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.28.14/js/jquery.tablesorter.min.js'></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#keywords').tablesorter();
+        });
+    </script>
+    <script type="text/javascript">
+        // Bắt sự kiện khi nhấn vào thẻ <a>
+        $(document).ready(function () {
+            $("#Create").click(function (event) {
+                event.preventDefault(); // Ngăn không làm mới trang
+
+                // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+                $.ajax({
+                    url: '@Url.Action("create")', // URL của action trả về Partial View 2
+                    type: 'GET',
+                    data: { idPhieuMuon: PhieuMuonId },
+                    success: function (data) {
+                        // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                        $("#partial-content").html(data);
+                    },
+                    error: function () {
+                        alert("Error loading content.");
+                    }
+                });
+            });
+            $(".Edit").click(function (event) {
+                event.preventDefault(); // Ngăn không làm mới trang
+                var dataId = $(this).data('id');
+                var manage = $(this).data('manage');
+                // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+                $.ajax({
+                    url: '@Url.Action("edit")', // URL của action trả về Partial View 2
+                    type: 'GET',
+                    data: { id: dataId, manage: manage },
+                    success: function (data) {
+                        // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                        $("#partial-content").html(data);
+                    },
+                    error: function () {
+                        alert("Error loading content.");
+                    }
+                });
+            });
+            $(".Details").click(function (event) {
+                event.preventDefault(); // Ngăn không làm mới trang
+                var dataId = $(this).data('id');
+                var manage = $(this).data('manage');
+                // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+                $.ajax({
+                    url: '@Url.Action("details")', // URL của action trả về Partial View 2
+                    type: 'GET',
+                    data: { id: dataId, manage: manage },
+                    success: function (data) {
+                        // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                        $("#partial-content").html(data);
+                    },
+                    error: function () {
+                        alert("Error loading content.");
+                    }
+                });
+            });
+            $(".Delete").click(function (event) {
+                event.preventDefault(); // Ngăn không làm mới trang
+                var dataId = $(this).data('id');
+                var manage = $(this).data('manage');
+                // Sử dụng AJAX để gọi đến controller và lấy Partial View 2
+                $.ajax({
+                    url: '@Url.Action("delete")', // URL của action trả về Partial View 2
+                    type: 'GET',
+                    data: { id: dataId, manage: manage },
+                    success: function (data) {
+                        // Thay thế nội dung của div chứa Partial View 1 bằng Partial View 2
+                        $("#partial-content").html(data);
+                    },
+                    error: function () {
+                        alert("Error loading content.");
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Home\AdminPage.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\details.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+    <PackageReference Include="MimeKit" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Home\AdminPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Home\AdminPage.cshtml" />
+    <None Include="wwwroot\assets\font-awesome\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\assets\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\assets\js\bootstrap-inputmask\bootstrap-inputmask.min.js" />
+    <None Include="wwwroot\assets\js\bootstrap-switch.js" />
+    <None Include="wwwroot\assets\js\bootstrap.min.js" />
+    <None Include="wwwroot\assets\js\calendar-conf-events.js" />
+    <None Include="wwwroot\assets\js\chart-master\Chart.js" />
+    <None Include="wwwroot\assets\js\chartjs-conf.js" />
+    <None Include="wwwroot\assets\js\common-scripts.js" />
+    <None Include="wwwroot\assets\js\easy-pie-chart.js" />
+    <None Include="wwwroot\assets\js\fancybox\jquery.fancybox.js" />
+    <None Include="wwwroot\assets\js\form-component.js" />
+    <None Include="wwwroot\assets\js\fullcalendar\fullcalendar.min.js" />
+    <None Include="wwwroot\assets\js\gritter-conf.js" />
+    <None Include="wwwroot\assets\js\gritter\js\jquery.gritter.js" />
+    <None Include="wwwroot\assets\js\jquery-1.8.3.min.js" />
+    <None Include="wwwroot\assets\js\jquery-easy-pie-chart\jquery.easy-pie-chart.js" />
+    <None Include="wwwroot\assets\js\jquery-ui-1.9.2.custom.min.js" />
+    <None Include="wwwroot\assets\js\jquery.backstretch.min.js" />
+    <None Include="wwwroot\assets\js\jquery.dcjqaccordion.2.7.js" />
+    <None Include="wwwroot\assets\js\jquery.js" />
+    <None Include="wwwroot\assets\js\jquery.nicescroll.js" />
+    <None Include="wwwroot\assets\js\jquery.scrollTo.min.js" />
+    <None Include="wwwroot\assets\js\jquery.sparkline.js" />
+    <None Include="wwwroot\assets\js\jquery.tagsinput.js" />
+    <None Include="wwwroot\assets\js\jquery.ui.touch-punch.min.js" />
+    <None Include="wwwroot\assets\js\morris-conf.js" />
+    <None Include="wwwroot\assets\js\sparkline-chart.js" />
+    <None Include="wwwroot\assets\js\tasks.js" />
+    <None Include="wwwroot\assets\js\zabuto_calendar.js" />
+    <None Include="wwwroot\assets\lineicons\fonts\linecons.svg" />
+    <None Include="wwwroot\assets\lineicons\lte-ie7.js" />
+  </ItemGroup>
+
+</Project>

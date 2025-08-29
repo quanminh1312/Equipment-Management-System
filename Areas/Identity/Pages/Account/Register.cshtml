@@ -1,0 +1,133 @@
+﻿@page "/register"
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+@section CustomStyles
+{
+<!--===============================================================================================-->
+<link rel="icon" type="image/png" href="~/images/icons/favicon.ico" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/fonts/iconic/css/material-design-iconic-font.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/css/util.css">
+<link rel="stylesheet" type="text/css" href="~/css/main.css">
+<!--===============================================================================================-->
+}
+<div class="limiter">
+	<div class="container-login100">
+		<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+			<form class="login100-form validate-form" id="FForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+				<span class="login100-form-title p-b-49">
+					Đăng ký tài khoản
+				</span>
+				<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="yêu cầu phải có mã người dùng">
+					<label asp-for="Input.MaNguoiDung" class="label-input100">MaNguoiDung</label>
+					<input asp-for="Input.MaNguoiDung" class="input100" autocomplete="MaNguoiDung" aria-required="true" placeholder="" required/>
+					<span asp-validation-for="Input.MaNguoiDung" class="text-danger focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="Yêu cầu phải có Email">
+					<label asp-for="Input.Email" class="label-input100">Email</label>
+					<input asp-for="Input.Email" class="input100" autocomplete="Email" aria-required="true" placeholder="name@example.com" />
+					<span asp-validation-for="Input.Email" class="text-danger focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="Yêu cầu phải có UserName">
+					<label asp-for="Input.TenDangNhap" class="label-input100">UserName</label>
+					<input asp-for="Input.TenDangNhap" class="input100" autocomplete="username" aria-required="true" placeholder="username" />
+					<span asp-validation-for="Input.TenDangNhap" class="text-danger focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="Yêu cầu phải có Password">
+					<label asp-for="Input.Password" class="label-input100">Password</label>
+					<input asp-for="Input.Password" class="input100" autocomplete="new-password" aria-required="true" placeholder="password" />
+					<span asp-validation-for="Input.Password" class="text-danger focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="wrap-input100 validate-input m-b-23" data-validate="Yêu cầu phải có ConfirmPassword">
+					<label asp-for="Input.ConfirmPassword" class="label-input100">Confirm Password</label>
+					<input asp-for="Input.ConfirmPassword" class="input100" autocomplete="new-password" aria-required="true" placeholder="password" />
+					<span asp-validation-for="Input.ConfirmPassword" class="text-danger focus-input100" data-symbol="&#xf190;"></span>
+				</div>
+				<div class="text-right p-t-8">
+					<a id="login" asp-page="./Login">
+						Đã có tài khoản? Đăng nhập ngay
+					</a>
+				</div>
+				<div class="container-login100-form-btn">
+					<div class="wrap-login100-form-btn">
+						<div class="login100-form-bgbtn"></div>
+						<button id="registerSubmit" type="button" class="login100-form-btn" onclick="return showModal()">
+							Đăng ký
+						</button>
+					</div>
+				</div>
+			</form>
+			<div class="txt1 text-center p-t-54 p-b-20">
+				<span>
+					Hoặc đăng ký bằng
+				</span>
+			</div>
+
+			<div class="flex-c-m">
+				<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+					<button type="submit" class="login100-social-item bg3" name="provider" value="Google" title="Log in using your Google account">
+						<i class="fa fa-google"></i>
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Xác nhận Đăng ký</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Bạn có chắc chắn muốn đăng ký với thông tin này không?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary close">Hủy</button>
+				<button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="dropDownSelect1"></div>
+<script src="~/js/main.js"></script>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+	<!--===============================================================================================-->
+	<script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="~/vendor/animsition/js/animsition.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="~/vendor/bootstrap/js/popper.js"></script>
+	<script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="~/vendor/select2/select2.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="~/vendor/daterangepicker/moment.min.js"></script>
+	<script src="~/vendor/daterangepicker/daterangepicker.js"></script>
+	<!--===============================================================================================-->
+	<script src="~/vendor/countdowntime/countdowntime.js"></script>
+	<!--===============================================================================================-->
+}

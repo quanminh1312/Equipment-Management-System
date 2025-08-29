@@ -1,0 +1,34 @@
+﻿@model CNPM.Models.ThietBi
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Chi tiết</h1>
+
+<div>
+    <h4>Thiết bị</h4>
+    <hr />
+    <link href="~/css/details.css" rel="stylesheet" />
+    <div class="table">
+        <section>
+    <details class="card" open>
+        <summary class="property lightblue">
+            <span class="eyebrow">Chi tiết thiết bị</span>
+            @Html.DisplayFor(model => model.MaThietBi)
+        </summary>
+        <div class="priceTable">
+                    <div class="qty">@Html.DisplayNameFor(model => model.MaThietBi):</div><div class="price">@Html.DisplayFor(model => model.MaThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.TenThietBi):</div><div class="price">@Html.DisplayFor(model => model.TenThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.LoaiThietBi):</div><div class="price">@Html.DisplayFor(model => model.LoaiThietBi.TenLoaiThietBi)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.NhaSanXuat):</div><div class="price">@Html.DisplayFor(model => model.NhaSanXuat)</div>
+                    <div class="qty">@Html.DisplayNameFor(model => model.TinhTrang):</div><div class="price">@Html.DisplayFor(model => model.TinhTrang.TenTinhTrang)</div>
+        </div>
+    </details>
+    </section>
+    </div>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a> |
+    <a asp-action="Index">Trở về danh sách</a>
+</div>

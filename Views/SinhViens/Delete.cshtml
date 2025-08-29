@@ -1,0 +1,203 @@
+﻿@model CNPM.Models.SinhVien
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Xóa</h1>
+
+<h3>Bạn có chắc chắn muốn xóa?</h3>
+<div>
+    <h4>Sinh viên</h4>
+    <hr />
+@section CustomStyles {
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .inf-content {
+            border: 1px solid #DDDDDD;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+}
+    <div class="container bootstrap snippets bootdey">
+        <div class="panel-body inf-content" style="background: #FFF7D1;">
+            <div class="row">
+                <div class="col-md-4">
+                    @if (Model.AnhDaiDien != null)
+                    {
+                        <img src="~/@Model.AnhDaiDien" alt="Ảnh đại diện" style="width:600px;" title="" class="img-circle img-thumbnail isTooltip" data-original-title="Usuario">
+                    }
+                    else
+                    {
+                        <img src="~/images/icons/user.ico" alt="Ảnh đại diện" title="" style="width:600px;" title="" class="img-circle img-thumbnail isTooltip" data-original-title="Usuario">
+                    }
+                </div>
+                <div class="col-md-6">
+                    <strong>Thông tin cá nhân</strong><br>
+                    <div class="table-responsive">
+                        <table class="table table-user-information">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-education text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.Lop)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.Lop)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-briefcase  text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.Khoa)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.Khoa)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-tower text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.HeDaoTao)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.HeDaoTao)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.ChuyenNganh)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.ChuyenNganh)
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-user text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.MaNguoiDung)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.MaNguoiDung)
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-envelope text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.Email)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.Email)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-eye-open text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.TenNguoiDung)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.TenNguoiDung)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-pawn text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.GioiTinh)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.GioiTinh)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-globe text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.DiaChi)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.DiaChi)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-earphone text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.SoDienThoai)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.SoDienThoai)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-calendar text-primary"></span>
+                                            @Html.DisplayNameFor(model => model.NgaySinh)
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        @Html.DisplayFor(model => model.NgaySinh)
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex;justify-content: flex-end;">
+                <form id="FForm" asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="button" value="Xóa" class="btn btn-danger" onclick="return showModal()" /> |
+                </form>
+                @if (User.IsInRole("ad"))
+                {
+                    <a asp-action="Index" class="link-user-information">Trở về danh sách</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="confirmDeleteModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa thông tin này không?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close">Hủy</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Xác nhận xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
